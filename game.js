@@ -75,7 +75,6 @@
   function getCellSize() {
     const wrapper = document.querySelector('.grid-container');
     const size = wrapper ? wrapper.offsetWidth : 400;
-    // 4 格之间有 3 条缝，与 CSS grid gap 一致
     return (size - (gridSize - 1) * CELL_GAP) / gridSize;
   }
 
@@ -103,8 +102,9 @@
         if (animMerged && animMerged[r] && animMerged[r][c]) {
           tile.classList.add('merged');
         }
-        // 本格是本次移动后新出现的方块：等既有方块移动结束后再播放出现动画
-        if (newTile && newTile.r === r && newTile.c === c) {
+        if (!animFrom) {
+          tile.classList.add('tile-initial-appear');
+        } else if (newTile && newTile.r === r && newTile.c === c) {
           tile.classList.add('tile-new');
         }
         tile.textContent = val;
@@ -116,7 +116,8 @@
         tile.style.height = target.size + 'px';
 
         const from = animFrom && animFrom[r] && animFrom[r][c];
-        if (from) {
+        const actuallyMoved = from && (from.r !== r || from.c !== c);
+        if (actuallyMoved) {
           const start = posToPx(from.r, from.c);
           tile.style.left = start.left + 'px';
           tile.style.top = start.top + 'px';
@@ -196,7 +197,7 @@
         if (c < merged.length) {
           if (newGrid[r][c] !== merged[c].value) moved = true;
           newGrid[r][c] = merged[c].value;
-          fromGrid[r][c] = { r, c: merged[c].fromCol };
+          fromGrid[r][c] = merged[c].fromCol !== c ? { r, c: merged[c].fromCol } : null;
           mergedGrid[r][c] = mergedFlags[c];
         } else {
           newGrid[r][c] = 0;
@@ -248,7 +249,7 @@
           const j = c - pad;
           if (newGrid[r][c] !== merged[j].value) moved = true;
           newGrid[r][c] = merged[j].value;
-          fromGrid[r][c] = { r, c: merged[j].fromCol };
+          fromGrid[r][c] = merged[j].fromCol !== c ? { r, c: merged[j].fromCol } : null;
           mergedGrid[r][c] = mergedFlags[j];
         } else {
           newGrid[r][c] = 0;
@@ -498,16 +499,65 @@
     btn.addEventListener('click', () => setGridSize(parseInt(btn.dataset.size, 10)));
   });
 
+  const titleWrap = document.getElementById('title-wrap');
+  const titleTrigger = document.getElementById('title-trigger');
+  const titleResetPanel = document.getElementById('title-reset-panel');
+  const titleResetBtn = document.getElementById('title-reset-btn');
+  const bestScoreWrap = document.getElementById('best-score-wrap');
+  const bestScoreTrigger = document.getElementById('best-score-trigger');
+  const bestClearPanel = document.getElementById('best-clear-panel');
+  const bestClearBtn = document.getElementById('best-clear-btn');
+
+  function closeAllPanels() {
+    titleResetPanel.classList.add('hidden');
+    bestClearPanel.classList.add('hidden');
+  }
+
+  titleTrigger.addEventListener('click', () => {
+    bestClearPanel.classList.add('hidden');
+    titleResetPanel.classList.toggle('hidden');
+  });
+
+  titleResetBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    gameStateBySize[4] = null;
+    gameStateBySize[5] = null;
+    gameStateBySize[6] = null;
+    localStorage.setItem('2048-best-4', '0');
+    localStorage.setItem('2048-best-5', '0');
+    localStorage.setItem('2048-best-6', '0');
+    loadBestScore();
+    newGame();
+    titleResetPanel.classList.add('hidden');
+  });
+
+  bestScoreTrigger.addEventListener('click', () => {
+    titleResetPanel.classList.add('hidden');
+    bestClearPanel.classList.toggle('hidden');
+  });
+
+  bestClearBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    bestScore = 0;
+    localStorage.setItem(getBestKey(), '0');
+    bestEl.textContent = '0';
+    bestClearPanel.classList.add('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (titleWrap.contains(e.target) || bestScoreWrap.contains(e.target)) return;
+    closeAllPanels();
+  });
+
   setupInput();
   buildGridBackground(gridSize);
   document.querySelector('.container').classList.add('grid-size-' + gridSize);
   loadBestScore();
   initGrid();
   updateScore(0);
-  // 首次渲染推迟到布局完成，避免 getCellSize() 在容器尚未有正确尺寸时计算错误
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      render();
-    });
+    requestAnimationFrame(() => render());
   });
+
+  window.addEventListener('resize', () => render());
 })();

@@ -5,13 +5,13 @@
 }
 
 html {
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
 @media (max-width: 768px) {
   html {
-    height: 100dvh; /* 移动端避免地址栏变化导致高度跳动 */
+    height: 100dvh;
   }
 }
 
@@ -37,34 +37,33 @@ html {
 
 body {
   height: 100%;
-  min-height: 0;
   overflow: hidden;
+  touch-action: none;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   font-family: var(--font);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px;
+  padding: 16px;
   color: var(--text-dark);
 }
 
+/* 容器按内容高度收缩，由 body 的 flex 居中，使整体在视口内垂直居中 */
 .container {
   text-align: center;
   max-width: 500px;
   width: 100%;
-  height: 100%;
-  max-height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  align-self: center;
 }
 
-.container.grid-size-5 {
-  max-width: 520px;
-}
-
-.container.grid-size-6 {
-  max-width: 540px;
+/* 棋盘外框 4/5/6 统一尺寸，不随格数变化；仅格子和棋子大小变化 */
+.title-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-bottom: 8px;
 }
 
 .title {
@@ -73,34 +72,111 @@ body {
   color: var(--text-light);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   letter-spacing: -2px;
-  margin-bottom: 8px;
   width: 100%;
-  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.title-reset-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  padding: 6px;
+  min-width: 120px;
+  background: var(--grid-bg);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.title-reset-panel.hidden {
+  display: none;
+}
+
+.title-reset-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-family: var(--font);
+  color: var(--text-dark);
+  background: var(--tile-2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.title-reset-btn:hover {
+  background: var(--tile-4);
 }
 
 .header {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  gap: 8px;
   margin-bottom: 8px;
   flex-shrink: 0;
 }
 
 .scores {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
 }
 
 .score-box {
+  flex: 1;
   background: var(--grid-bg);
-  padding: 8px 20px;
+  padding: 8px 12px;
   border-radius: 6px;
-  min-width: 70px;
 }
 
 .score-box.best {
   background: #8f7a66;
   color: var(--text-light);
+  cursor: pointer;
+}
+
+.best-score-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.best-clear-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 6px;
+  background: var(--grid-bg);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.best-clear-panel.hidden {
+  display: none;
+}
+
+.best-clear-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-family: var(--font);
+  color: var(--text-dark);
+  background: var(--tile-2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.best-clear-btn:hover {
+  background: var(--tile-4);
 }
 
 .score-label {
@@ -119,20 +195,16 @@ body {
 
 .size-select {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  align-items: stretch;
+  gap: 8px;
   margin-bottom: 8px;
   flex-shrink: 0;
-}
-
-.size-label {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
+  width: 100%;
 }
 
 .size-btn {
-  padding: 8px 16px;
+  flex: 1;
+  padding: 10px 8px;
   font-size: 0.95rem;
   font-family: var(--font);
   font-weight: 600;
@@ -164,28 +236,27 @@ body {
   color: var(--tile-2048);
 }
 
+/* 原则：棋盘、格子、棋子均为正方形；间距固定；不破坏中间内容 */
 .game-wrapper {
   position: relative;
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 auto;
+  width: 100%;
+  aspect-ratio: 1;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  touch-action: none;
   background: var(--grid-bg);
   border-radius: 12px;
   padding: 12px;
-  margin-bottom: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  /* 移动端：在棋盘上滑动只触发游戏操作，不带动整页滚动/回弹 */
-  touch-action: none;
+  margin-bottom: 16px;
 }
 
+/* 格子区域 = 棋盘内边距后的正方形，与棋盘同中心 */
 .grid-container {
-  position: relative;
-  aspect-ratio: 1;
-  width: 100%;
-  height: auto;
-  max-height: 100%;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
 }
 
 .grid-background {
@@ -224,6 +295,10 @@ body {
   font-weight: 700;
   border-radius: 6px;
   transition: top 0.18s ease-out, left 0.18s ease-out, transform 0.15s ease;
+}
+
+/* 仅首次出现时使用（新游戏/初始），移动后未变的格子不加此 class，保持前后一致 */
+.tile.tile-initial-appear {
   animation: appear 0.2s ease;
 }
 
@@ -317,6 +392,8 @@ body {
 }
 
 .new-game-btn {
+  position: relative;
+  z-index: 1;
   padding: 16px 36px;
   font-size: 1.1rem;
   background: var(--tile-2048);

@@ -11,21 +11,30 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="title">2048</h1>
+    <div class="title-wrap" id="title-wrap">
+      <h1 class="title" id="title-trigger">2048</h1>
+      <div class="title-reset-panel hidden" id="title-reset-panel">
+        <button type="button" class="title-reset-btn" id="title-reset-btn">全部重置</button>
+      </div>
+    </div>
     <header class="header">
       <div class="scores">
         <div class="score-box">
           <span class="score-label">得分</span>
           <span id="score" class="score-value">0</span>
         </div>
-        <div class="score-box best">
-          <span class="score-label">最高</span>
-          <span id="best" class="score-value">0</span>
+        <div class="best-score-wrap" id="best-score-wrap">
+          <div class="score-box best" id="best-score-trigger" tabindex="0">
+            <span class="score-label">最高</span>
+            <span id="best" class="score-value">0</span>
+          </div>
+          <div class="best-clear-panel hidden" id="best-clear-panel">
+            <button type="button" class="best-clear-btn" id="best-clear-btn">清除</button>
+          </div>
         </div>
       </div>
     </header>
     <div class="size-select">
-      <span class="size-label">棋盘</span>
       <button type="button" class="size-btn active" data-size="4">4×4</button>
       <button type="button" class="size-btn" data-size="5">5×5</button>
       <button type="button" class="size-btn" data-size="6">6×6</button>
