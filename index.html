@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2048</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">2048</h1>
+    <header class="header">
+      <div class="scores">
+        <div class="score-box">
+          <span class="score-label">得分</span>
+          <span id="score" class="score-value">0</span>
+        </div>
+        <div class="score-box best">
+          <span class="score-label">最高</span>
+          <span id="best" class="score-value">0</span>
+        </div>
+      </div>
+    </header>
+    <div class="size-select">
+      <span class="size-label">棋盘</span>
+      <button type="button" class="size-btn active" data-size="4">4×4</button>
+      <button type="button" class="size-btn" data-size="5">5×5</button>
+      <button type="button" class="size-btn" data-size="6">6×6</button>
+    </div>
+    <p class="intro">使用 <strong>方向键</strong> 或 <strong>滑动</strong> 移动方块，相同数字合并加倍！</p>
+    <div class="game-wrapper">
+      <div id="game-over" class="game-over hidden">
+        <p>游戏结束</p>
+        <button id="retry-btn" class="btn">再玩一次</button>
+      </div>
+      <div id="game-win" class="game-win hidden">
+        <p>恭喜！达到 2048！</p>
+        <button id="keep-playing" class="btn">继续游戏</button>
+      </div>
+      <div id="grid-container" class="grid-container">
+        <div id="grid-background" class="grid-background"></div>
+        <div id="tile-container" class="tile-container"></div>
+      </div>
+    </div>
+    <button id="new-game-btn" class="btn new-game-btn">新游戏</button>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
