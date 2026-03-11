@@ -148,6 +148,8 @@ body {
   padding: 12px;
   margin-bottom: 24px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  /* 移动端：在棋盘上滑动只触发游戏操作，不带动整页滚动/回弹 */
+  touch-action: none;
 }
 
 .grid-container {

@@ -401,10 +401,16 @@
     });
 
     const gameWrapper = document.querySelector('.game-wrapper');
+    let touchStartedOnGame = false;
     gameWrapper.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      touchStartedOnGame = true;
     }, { passive: true });
+
+    gameWrapper.addEventListener('touchmove', (e) => {
+      if (touchStartedOnGame) e.preventDefault();
+    }, { passive: false });
 
     gameWrapper.addEventListener('touchend', (e) => {
       const dx = e.changedTouches[0].clientX - touchStartX;
@@ -417,6 +423,11 @@
         if (dy > minSwipe) handleMove('down');
         else if (dy < -minSwipe) handleMove('up');
       }
+      touchStartedOnGame = false;
+    }, { passive: true });
+
+    gameWrapper.addEventListener('touchcancel', () => {
+      touchStartedOnGame = false;
     }, { passive: true });
   }
 
